@@ -35,7 +35,7 @@ class EDAProcessor:
         """Prints summary statistics of the dataset."""
         print("Summary Statistics:")
         print(self.df.describe(include="all").transpose())
-
+        return self.df.describe(include="all").transpose()
     def plot_numerical_distributions(self, numerical_features: list):
         """Plots the distribution of numerical features."""
         for feature in numerical_features:
@@ -99,7 +99,27 @@ class EDAProcessor:
             plt.ylabel("Count")
             plt.xticks(rotation=45)
             plt.show()
+    
+    def time_based_analysis(self, time_column):
+        """Analyzes transaction patterns over time."""
+        if time_column in self.df.columns:
+            self.df[time_column] = pd.to_datetime(self.df[time_column], errors="coerce")
+            self.df["Hour"] = self.df[time_column].dt.hour
+            self.df["Day"] = self.df[time_column].dt.day_name()
 
+            plt.figure(figsize=(12, 6))
+            sns.countplot(data=self.df, x="Hour", palette="viridis")
+            plt.title("Transactions by Hour")
+            plt.xlabel("Hour of Day")
+            plt.ylabel("Transaction Count")
+            plt.show()
+
+            plt.figure(figsize=(12, 6))
+            sns.countplot(data=self.df, x="Day", order=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], palette="muted")
+            plt.title("Transactions by Day")
+            plt.xlabel("Day of Week")
+            plt.ylabel("Transaction Count")
+            plt.show()
     def correlation_analysis(self, numerical_features: list):
         """Plots a heatmap showing correlations between numerical features."""
         valid_features = [f for f in numerical_features if f in self.df.columns]
@@ -137,3 +157,4 @@ class EDAProcessor:
             plt.title(f"Outliers in {feature}")
             plt.xlabel(feature)
             plt.show()
+        return self.df
