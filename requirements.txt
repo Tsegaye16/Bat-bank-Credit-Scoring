@@ -4,3 +4,6 @@ os
 pandas
 re
 seaborn
+sklearn
+typing
+xverse
